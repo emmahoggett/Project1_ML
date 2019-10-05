@@ -1,10 +1,10 @@
 def least_squares(y, tx):
     """calculate the least squares solution."""
-    a = tx.T.dot(tx)
+    A = tx.T.dot(tx)
     b = tx.T.dot(y)
-    w=np.linalg.solve(a, b)
-    err=y-np.dot(tx,w)
-    loss=1/tx.shape[1]*np.dot(err.T,err)
+    w = np.linalg.solve(A, b)
+    err = y - np.dot(tx,w)
+    loss = 1 / tx.shape[1]*np.dot(err.T,err)
     return w, loss
 
 def ridge_regression(y, tx, lambda_):
