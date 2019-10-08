@@ -1,3 +1,5 @@
+import numpy as np
+
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     """Gradient descent algorithm."""
     w = initial_w
@@ -34,14 +36,12 @@ def least_squares(y, tx):
 
 def ridge_regression(y, tx, lambda_):
     """Implement ridge regression."""
-    N = y.shape[0]
-    aI = 2 * N * lambda_ * np.identity(N)
-    A = tx.T.dot(tx) + aI
+    aI = 2 * tx.shape[0] * lambda_ * np.identity(tx.shape[1])
+    a = tx.T.dot(tx) + aI
     b = tx.T.dot(y)
-    w = np.linalg.solve(A, b)
-    err = y - tx.dot(w)
-    loss = (1/N)* err.dot(err)
-    return w, loss
+    w = np.linalg.solve(a, b)
+    loss = compute_loss(y,tx,w)
+    return w
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
     w = initial_w
@@ -63,12 +63,12 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
 
 #############################################
 
+### for MSE
+
 def compute_loss(y, tx, w):
     """Compute the loss with MSE."""
-    N = y.shape[0]
-    err = y - tx.dot(w) #error
-    loss = (1/(2*N)) * err.dot(err)    
-    return loss
+    e = y - tx.dot(w) #error    
+    return 1/2*np.mean(e**2)
 
 def compute_gradient(y, tx, w):
     """Compute the gradient."""
