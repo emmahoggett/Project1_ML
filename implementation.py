@@ -31,7 +31,7 @@ def least_squares(y, tx):
     A = tx.T.dot(tx)
     b = tx.T.dot(y)
     #w = np.linalg.solve(A, b)
-    w = np.linalg.lstsq(A, b, rcond=None)[0]
+    w = np.linalg.lstsq(A, b, rcond=None)[0] #improvement of computation if A singular matrix
     err = y - tx.dot(w)
     loss = (1/N) * err.dot(err)
     return w, loss
