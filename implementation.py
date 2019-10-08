@@ -34,7 +34,7 @@ def least_squares(y, tx):
     loss = (1/N) * err.dot(err)
     return w, loss
 
-def ridge_regression(y, tx, lambda_):
+def ridge_regression(y, tx, lambda_): # modifier 
     """Implement ridge regression."""
     aI = 2 * tx.shape[0] * lambda_ * np.identity(tx.shape[1])
     a = tx.T.dot(tx) + aI
@@ -63,7 +63,7 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
 
 #############################################
 
-### for MSE
+### for MSE - modifier compute loss
 
 def compute_loss(y, tx, w):
     """Compute the loss with MSE."""
