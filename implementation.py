@@ -82,16 +82,11 @@ def compute_gradient(y, tx, w):
     grad = - (1/N) * tx.T.dot(e)
     return grad
 
-def compute_mse(y, tx, w):
-#     """compute the loss by mse."""
-#     N = y.shape[0]
-#     err = y - tx.dot(w) #error
-#     mse = err.dot(err) / (2 * N)
-    predictions = tx.dot(w)
-    predictions[np.where(predictions > 0)] = 1
-    predictions[np.where(predictions <= 0)] = -1
-    e = y - predictions
-    mse = np.squeeze(e.T.dot(e)) / (2 * len(e))
-    return mse
+# def compute_mse(y, tx, w):
+# #     """compute the loss by mse."""
+# #     N = y.shape[0]
+# #     err = y - tx.dot(w) #error
+# #     mse = err.dot(err) / (2 * N)
+#     return mse
 
 
