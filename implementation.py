@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     """Gradient descent algorithm."""
     w = initial_w
@@ -27,7 +30,8 @@ def least_squares(y, tx):
     N = y.shape[0]
     A = tx.T.dot(tx)
     b = tx.T.dot(y)
-    w = np.linalg.solve(A, b)
+    #w = np.linalg.solve(A, b)
+    w = np.linalg.lstsq(A, b, rcond=None)[0] #improvement of computation if A singular matrix
     err = y - tx.dot(w)
     loss = (1/N) * err.dot(err)
     return w, loss
@@ -67,7 +71,9 @@ def compute_loss(y, tx, w):
     """Compute the loss with MSE."""
     N = y.shape[0]
     err = y - tx.dot(w) #error
-    loss = (1/(2*N)) * err.dot(err)    
+    loss = (1/(2*N)) * err.dot(err)
+    print("loss :")
+    print(loss)
     return loss
 
 def compute_gradient(y, tx, w):
