@@ -1,6 +1,8 @@
 import numpy as np
 
 
+##### MACHINE LEARNING METHODS #####
+
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     """Gradient descent algorithm."""
     w = initial_w
@@ -38,13 +40,11 @@ def least_squares(y, tx):
 
 def ridge_regression(y, tx, lambda_):
     """Implement ridge regression."""
-    N = y.shape[0]
-    aI = 2 * N * lambda_ * np.identity(N)
+    aI = lambda_ * np.identity(tx.shape[1]) # This is actually lambda' in the course's notation.
     A = tx.T.dot(tx) + aI
     b = tx.T.dot(y)
-    w = np.linalg.solve(A, b)
-    err = y - tx.dot(w)
-    loss = (1/N)* err.dot(err)
+    w = np.linalg.lstsq(A, b, rcond=None)[0]
+    loss = compute_loss(y, tx, w)
     return w, loss
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
@@ -66,14 +66,13 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     return w, loss
 
 #############################################
+##### COSTS #####
 
 def compute_loss(y, tx, w):
     """Compute the loss with MSE."""
     N = y.shape[0]
     err = y - tx.dot(w) #error
     loss = (1/(2*N)) * err.dot(err)
-    print("loss :")
-    print(loss)
     return loss
 
 def compute_gradient(y, tx, w):
@@ -82,5 +81,17 @@ def compute_gradient(y, tx, w):
     e = y - tx.dot(w) #error
     grad = - (1/N) * tx.T.dot(e)
     return grad
+
+def compute_mse(y, tx, w):
+#     """compute the loss by mse."""
+#     N = y.shape[0]
+#     err = y - tx.dot(w) #error
+#     mse = err.dot(err) / (2 * N)
+    predictions = tx.dot(w)
+    predictions[np.where(predictions > 0)] = 1
+    predictions[np.where(predictions <= 0)] = -1
+    e = y - predictions
+    mse = np.squeeze(e.T.dot(e)) / (2 * len(e))
+    return mse
 
 
