@@ -10,7 +10,7 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     for n_iter in range(max_iters):
         loss = compute_loss(y, tx, w) #compute loss with MSE formula
         grad = compute_gradient(y, tx, w)
-        w = w - gamma*grad;
+        w = w - gamma*grad
     return w, loss
 
 def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma):
