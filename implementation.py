@@ -10,7 +10,7 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     for n_iter in range(max_iters):
         loss = compute_loss(y, tx, w) #compute loss with MSE formula
         grad = compute_gradient(y, tx, w)
-        w = w - gamma*grad
+        w = w - gamma*grad;
     return w, loss
 
 def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma):
@@ -38,32 +38,31 @@ def least_squares(y, tx):
     loss = (1/N) * err.dot(err)
     return w, loss
 
-def ridge_regression(y, tx, lambda_): # modifier 
+def ridge_regression(y, tx, lambda_):
     """Implement ridge regression."""
-    aI = 2 * tx.shape[0] * lambda_ * np.identity(tx.shape[1])
-    a = tx.T.dot(tx) + aI
+    aI = lambda_ * np.identity(tx.shape[1])
+    A = tx.T.dot(tx) + aI
     b = tx.T.dot(y)
-    w = np.linalg.solve(a, b)
-    loss = compute_loss(y,tx,w)
-    return w,loss
+    w = np.linalg.lstsq(A, b, rcond=None)[0]
+    loss = compute_loss(y, tx, w)
+    return w, loss
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
     w = initial_w
     for i in range(max_iters):
-        sigma = 1/ (1-np.exp(-np.dot(tx,w)))
-        grad = np.dot(tx.T,sigma-y)/y.shape[0]
-        loss = logistic_loss(y,sigma)
-        #np.dot(y.T,np.log(sigma))+np.dot((np.ones(y.shape[0])-y).T, np.log(1-sigma))
+        sigma = np.divide(np.exp(np.dot(tx,w)), 1 + np.exp(np.dot(tx,w)))
+        grad = np.dot(tx.T,sigma-y)
+        loss = - np.dot(y.T,np.log(sigma)) + np.dot((1-y).T, np.log(1-sigma))
         w = w - gamma*grad  
-    return w,loss
+    return w, loss
 
 def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     w = initial_w
     for i in range(max_iters):
-        sigma = 1/ (1-np.exp(-np.dot(tx_new,w)))
-        grad = np.dot(tx_sigma.T,sigma-y)+lambda_*w
-        loss = logistic_loss(y,sigma)
-        w = w - np.dot(gamma,grad)
+        sigma = np.divide(np.exp(np.dot(tx,w)), 1+np.exp(np.dot(tx,w)))
+        grad = np.dot(tx.T,sigma-y)+lambda_*w
+        loss = - np.dot(y.T,np.log(sigma))+np.dot((1-y).T, np.log(1-sigma))+lambda_/2*w.T.dot(w)
+        w = w - gamma*grad
     return w, loss
 
 #############################################

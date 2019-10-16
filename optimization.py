@@ -13,7 +13,8 @@ def build_poly(x, degree):
 
 def cross_validation_lambda(y, tX, k_fold=4):
     seed = 1
-    lambdas = np.logspace(-7,12,100)
+    #lambdas = [0, 0.1, 0.15, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 4, 5]
+    lambdas = np.logspace(-7,6,100)
     # split data in k fold
     k_indices = build_k_indices(y, k_fold, seed)
     # define lists to store the loss of training data and test data
@@ -27,11 +28,11 @@ def cross_validation_lambda(y, tX, k_fold=4):
             l_tr, l_te = cross_validation(y, tX, k_indices, k, lambda_)
             loss_tr = loss_tr + l_tr
             loss_te = loss_te + l_te
-        loss_tr = loss_tr/k_fold
-        loss_te = loss_te/k_fold 
+        loss_tr = loss_tr/(k_fold)
+        loss_te = loss_te/(k_fold)
         rmse_tr.append(loss_tr)
         rmse_te.append(loss_te)
-    optimal_lambda = lambdas[np.argmin(rmse_te)];    
+    optimal_lambda = lambdas[np.argmin(rmse_te)]    
     cross_validation_visualization(lambdas, rmse_tr, rmse_te)
     return optimal_lambda
 
