@@ -6,6 +6,9 @@ def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te):
     y_tr, tX_tr, ids_tr, _ = extract_jet_num(jet_num, y_tr, tX_tr, ids_tr)
     y_te, tX_te, ids_te, _ = extract_jet_num(jet_num, y_te, tX_te, ids_te)
     
+    tX_tr=extract_values(tX_tr, ids_tr)
+    tX_te=extract_values(tX_te, ids_te)
+    
     #tX_tr, m, std = standardize(tX_tr)
     #tX_te = standardize_te(tX_te, m, std)
     return y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te
@@ -29,6 +32,19 @@ def extract_jet_num(jet_num, y, tX, ids):
     new_ids = ids[is_jet_num]
     return new_y, new_tX, new_ids, tX_jet_num
 
+# Remaining -999 values
+def extract_values(tX, ids):
+    
+    for i in range(tX.shape[1]):
+        is_undefined = tX[:,i] == -999
+        mean = tX[is_undefined == False, i].mean()
+        new_tX = np.copy(tX)
+        
+        for j in range(new_tX.shape[0]):
+            if is_undefined[j]:
+                new_tX[j,i] = mean
+        
+    return new_tX
 
 #Standardize the original dataset 
 
