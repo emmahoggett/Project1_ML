@@ -2,19 +2,22 @@ import numpy as np
 
 ##### Exploratory data analysis #####
 
-def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te):
-    y_tr[y_tr==-1] = 1e-323
-    y_te[y_te==-1] = 1e-323
+def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_fin, tX_fin, ids_fin,ratio=0.8):
+   
     
     y_tr, tX_tr, ids_tr, _ = extract_jet_num(jet_num, y_tr, tX_tr, ids_tr)
-    y_te, tX_te, ids_te, _ = extract_jet_num(jet_num, y_te, tX_te, ids_te)
+    y_fin, tX_fin, ids_fin, _ = extract_jet_num(jet_num, y_fin, tX_fin, ids_fin)
     
     tX_tr = extract_values(tX_tr, ids_tr)
-    tX_te = extract_values(tX_te, ids_te)
+    tX_fin = extract_values(tX_fin, ids_fin)
     
-    #tX_tr, m, std = standardize(tX_tr)
-    #tX_te = standardize_te(tX_te, m, std)
-    return y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te
+    tx_tr, tx_te, y_tr, y_te, ids_tr, ids_te=split_data(tX_tr, y_tr, ids_tr, ratio, seed=1)
+    
+    #tx_tr, m, std = standardize(tx_tr)
+    #tx_te = standardize_te(tx_te, m, std)
+    
+    
+    return y_tr, tx_tr, ids_tr, y_te, tx_te, ids_te, y_fin, tX_fin, ids_fin
 
 # Extract the data points with the same number of jets
 
@@ -93,3 +96,9 @@ def build_poly(x, degree):
         poly = np.c_[poly, np.power(x, deg)]
     return poly
 
+def build_multi_poly(X, degree):
+    multi_poly=[]
+    for i in range(X.shape[1]):
+        poly=build_poly(X[:,i],degree)
+        multi_poly=np.c_[multi_poly poly]
+    return multi_poly
