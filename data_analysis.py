@@ -2,16 +2,20 @@ import numpy as np
 
 ##### Exploratory data analysis #####
 
-def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te):
+def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te, y_fin, tX_fin, ids_fin):
     y_tr, tX_tr, ids_tr, _ = extract_jet_num(jet_num, y_tr, tX_tr, ids_tr)
     y_te, tX_te, ids_te, _ = extract_jet_num(jet_num, y_te, tX_te, ids_te)
+    y_fin, tX_fin, ids_fin, _ = extract_jet_num(jet_num, y_fin, tX_fin, ids_fin)
     
-    tX_tr=extract_values(tX_tr, ids_tr)
-    tX_te=extract_values(tX_te, ids_te)
+    tX_tr = extract_values(tX_tr, ids_tr)
+    tX_te = extract_values(tX_te, ids_te)
+    tX_fin = extract_values(tX_fin, ids_fin)
     
     #tX_tr, m, std = standardize(tX_tr)
     #tX_te = standardize_te(tX_te, m, std)
-    return y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te
+    #tX_fin = standardize_te(tX_fin, m, std)
+    
+    return y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te, y_fin, tX_fin, ids_fin
 
 # Extract the data points with the same number of jets
 
