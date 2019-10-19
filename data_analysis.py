@@ -92,3 +92,11 @@ def build_poly(x, degree):
         poly = np.c_[poly, np.power(x, deg)]
     return poly
 
+def build_multi_poly(X, degree):
+    multipoly=[]
+    for i in range(X.shape[1]):
+        poly=build_poly(X[:,i],degree)
+        multi_poly=np.c_[multi_poly, poly]
+    return multi_poly
+
+
