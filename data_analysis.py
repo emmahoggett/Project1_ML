@@ -2,20 +2,19 @@ import numpy as np
 
 ##### Exploratory data analysis #####
 
-def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te, y_fin, tX_fin, ids_fin):
+def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te):
+    y_tr[y_tr==-1] = 1e-323
+    y_te[y_te==-1] = 1e-323
+    
     y_tr, tX_tr, ids_tr, _ = extract_jet_num(jet_num, y_tr, tX_tr, ids_tr)
     y_te, tX_te, ids_te, _ = extract_jet_num(jet_num, y_te, tX_te, ids_te)
-    y_fin, tX_fin, ids_fin, _ = extract_jet_num(jet_num, y_fin, tX_fin, ids_fin)
     
     tX_tr = extract_values(tX_tr, ids_tr)
     tX_te = extract_values(tX_te, ids_te)
-    tX_fin = extract_values(tX_fin, ids_fin)
     
     #tX_tr, m, std = standardize(tX_tr)
     #tX_te = standardize_te(tX_te, m, std)
-    #tX_fin = standardize_te(tX_fin, m, std)
-    
-    return y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te, y_fin, tX_fin, ids_fin
+    return y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te
 
 # Extract the data points with the same number of jets
 
@@ -49,6 +48,8 @@ def extract_values(tX, ids):
                 new_tX[j,i] = mean
         
     return new_tX
+
+
 
 #Standardize the original dataset 
 
@@ -91,12 +92,4 @@ def build_poly(x, degree):
     for deg in range(1, degree+1):
         poly = np.c_[poly, np.power(x, deg)]
     return poly
-
-def build_multi_poly(X, degree):
-    multipoly=[]
-    for i in range(X.shape[1]):
-        poly=build_poly(X[:,i],degree)
-        multi_poly=np.c_[multi_poly, poly]
-    return multi_poly
-
 
