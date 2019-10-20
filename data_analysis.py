@@ -2,16 +2,20 @@ import numpy as np
 
 ##### Exploratory data analysis #####
 
-def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te):
+def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te, y_fin, tX_fin, ids_fin):
     y_tr, tX_tr, ids_tr, _ = extract_jet_num(jet_num, y_tr, tX_tr, ids_tr)
     y_te, tX_te, ids_te, _ = extract_jet_num(jet_num, y_te, tX_te, ids_te)
+    y_fin, tX_fin, ids_fin, _ = extract_jet_num(jet_num, y_fin, tX_fin, ids_fin)
     
-    tX_tr=extract_values(tX_tr, ids_tr)
-    tX_te=extract_values(tX_te, ids_te)
+    tX_tr = extract_values(tX_tr, ids_tr)
+    tX_te = extract_values(tX_te, ids_te)
+    tX_fin = extract_values(tX_fin, ids_fin)
     
     #tX_tr, m, std = standardize(tX_tr)
     #tX_te = standardize_te(tX_te, m, std)
-    return y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te
+    #tX_fin = standardize_te(tX_fin, m, std)
+    
+    return y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te, y_fin, tX_fin, ids_fin
 
 # Extract the data points with the same number of jets
 
@@ -83,8 +87,16 @@ def split_data(x, y, ids, ratio, seed=1):
 
 def build_poly(x, degree):
     """polynomial basis functions for input data x, for j=0 up to j=degree."""
-    poly = np.ones((len(x), 1))
-    for deg in range(1, degree+1):
+    poly = x
+    for deg in range(2, degree+1):
         poly = np.c_[poly, np.power(x, deg)]
     return poly
 
+def build_multi_poly(x, degrees):
+    for i in reversed(range(x.shape[1])):
+        #poly = build_poly(X[:,i],degrees[i])
+        #multi_poly = np.c_[multi_poly, poly]
+        print(' x size', x.shape)
+        x = np.c_[x[:,:i], build_poly(x[:,i],degrees[i]), x[:,i+1:]]
+    tx = np.c_[np.ones((x.shape[0], 1)), x]
+    return tx
