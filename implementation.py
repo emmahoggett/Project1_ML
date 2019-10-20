@@ -1,5 +1,8 @@
 import numpy as np
 
+
+##### MACHINE LEARNING METHODS #####
+
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     """Gradient descent algorithm."""
     w = initial_w
@@ -29,46 +32,57 @@ def least_squares(y, tx):
     N = y.shape[0]
     A = tx.T.dot(tx)
     b = tx.T.dot(y)
-    w = np.linalg.solve(A, b)
+    #w = np.linalg.solve(A, b)
+    w = np.linalg.lstsq(A, b, rcond=None)[0] #improvement of computation if A singular matrix
     err = y - tx.dot(w)
     loss = (1/N) * err.dot(err)
     return w, loss
 
-def ridge_regression(y, tx, lambda_): # modifier 
+def ridge_regression(y, tx, lambda_):
     """Implement ridge regression."""
-    aI = 2 * tx.shape[0] * lambda_ * np.identity(tx.shape[1])
-    a = tx.T.dot(tx) + aI
+    aI = lambda_ * np.identity(tx.shape[1])
+    A = tx.T.dot(tx) + aI
     b = tx.T.dot(y)
-    w = np.linalg.solve(a, b)
-    loss = compute_loss(y,tx,w)
-    return w
-
-def logistic_regression(y, tx, initial_w, max_iters, gamma):
-    w = initial_w
-    for i in range(max_iters):
-        sigma = np.divide(np.exp(np.dot(tx,w)), 1 + np.exp(np.dot(tx,w)))
-        grad = np.dot(tx.T,sigma-y)
-        loss = - np.dot(y.T,np.log(sigma)) + np.dot((1-y).T, np.log(1-sigma))
-        w = w - gamma*grad  
+    w = np.linalg.lstsq(A, b, rcond=None)[0]
+    loss = compute_loss(y, tx, w)
     return w, loss
 
-def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
+def logistic_regression(y, tx, initial_w, max_iters, gamma,threshold= 1e-8):
     w = initial_w
+    losses=[]
     for i in range(max_iters):
-        sigma = np.divide(np.exp(np.dot(tx,w)), 1+np.exp(np.dot(tx,w)))
-        grad = np.dot(tx.T,sigma-y)+lambda_*w
-        loss = - np.dot(y.T,np.log(sigma))+np.dot((1-y).T, np.log(1-sigma))+lambda_/2*w.T.dot(w)
-        w = w - gamma*grad
+        sigma = 1/ (1+np.exp(-np.dot(tx,w)))
+        grad = np.dot(tx.T,sigma-y)/y.shape[0]
+        loss = -np.mean(y*np.log(sigma)+(1-y)*np.log(1-sigma))
+        w = w - gamma*grad  
+        losses.append(loss)
+        if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < threshold:
+            break
+        #np.dot(y.T,np.log(sigma))+np.dot((np.ones(y.shape[0])-y).T, np.log(1-sigma))
+    return w, loss
+
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma,threshold= 1e-8):
+    w = initial_w
+    losses=[]
+    for i in range(max_iters):
+        sigma = 1/ (1+np.exp(-np.dot(tx,w)))
+        grad = np.dot(tx.T,sigma-y)/y.shape[0]+lambda_*w
+        loss = -np.mean(y*np.log(sigma)+(1-y)*np.log(1-sigma))+lambda_/2*np.dot(w.T,w)
+        losses.append(loss)
+        if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < threshold:
+            break
+        w = w - grad*gamma
     return w, loss
 
 #############################################
-
-### for MSE - modifier compute loss
+##### COSTS #####
 
 def compute_loss(y, tx, w):
     """Compute the loss with MSE."""
-    e = y - tx.dot(w) #error    
-    return 1/2*np.mean(e**2)
+    N = y.shape[0]
+    err = y - tx.dot(w) #error
+    loss = (1/(2*N)) * err.dot(err)
+    return loss
 
 def compute_gradient(y, tx, w):
     """Compute the gradient."""
@@ -76,5 +90,3 @@ def compute_gradient(y, tx, w):
     e = y - tx.dot(w) #error
     grad = - (1/N) * tx.T.dot(e)
     return grad
-
-

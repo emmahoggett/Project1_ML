@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """a function of ploting figures."""
 import numpy as np
-from build_polynomial import *
+from data_analysis import *
 import matplotlib.pyplot as plt
 
 
