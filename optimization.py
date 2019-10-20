@@ -30,7 +30,7 @@ def cross_validation_lambda(y, tX, k_fold=4):
     cross_validation_visualization(lambdas, rmse_tr, rmse_te)
     return optimal_lambda
 
-def cross_validation_degree(y, tX, feat_ind, expansion_degrees, maxDeg=3, k_fold=4):
+def cross_validation_degree(y, X, feat_ind, expansion_degrees, maxDeg=3, k_fold=4):
     """
     feat_ind : index of the feature over which cross validation is done to find the optimal_degree
     expansion_degrees : indicates to what order should the other features be during the cross validation.
@@ -45,9 +45,8 @@ def cross_validation_degree(y, tX, feat_ind, expansion_degrees, maxDeg=3, k_fold
         loss_tr = 0.0
         loss_te = 0.0
         expansion_degrees[feat_ind] = degree # change degree of feature at index 'feat_ind'
-        tX = build_multi_poly(tX, expansion_degrees)
+        tX = build_multi_poly(X, expansion_degrees)
         for k in range(k_fold):
-            print('--feat_ind', feat_ind, ', degree', degree, ', fold', k)
             l_tr, l_te = cross_validation(y, tX, k_indices, k)
             loss_tr = loss_tr + l_tr
             loss_te = loss_te + l_te
@@ -55,11 +54,8 @@ def cross_validation_degree(y, tX, feat_ind, expansion_degrees, maxDeg=3, k_fold
         loss_te = loss_te/(k_fold)
         rmse_tr.append(loss_tr)
         rmse_te.append(loss_te)
-    print('Training errors:', losses_tr)
-    print('Testing errors:', losses_te)
-    optimal_degree = np.argmin(losses_te)+1;
-    cross_validation_visualization(lambdas, rmse_tr, rmse_te)
-    print('Feature index', feat_ind, "'s optimal degree is", optimal_degree)
+    optimal_degree = np.argmin(rmse_te)+1;
+    cross_validation_visualization(degrees, rmse_tr, rmse_te)
     return optimal_degree
 
 def cross_validation(y, tx, k_indices, k, lambda_=0.15):
@@ -68,16 +64,13 @@ def cross_validation(y, tx, k_indices, k, lambda_=0.15):
     te_indices = k_indices[k]
     tr_indices = k_indices[~(np.arange(k_indices.shape[0]) == k)]
     tr_indices = tr_indices.reshape(-1)
-    print(tr_indices)
     tr_indices = tr_indices.astype(np.int64)
-    print(tr_indices.shape)
-    print(tx.shape)
     tx_tr = tx[tr_indices]
     y_tr = y[tr_indices]
     tx_te = tx[te_indices]
     y_te = y[te_indices]
-    tx_tr = build_poly(tx_tr, degree)
-    tx_te = build_poly(tx_te, degree)
+    #tx_tr = build_poly(tx_tr, degree)
+    #tx_te = build_poly(tx_te, degree)
     weight, loss_tr = ridge_regression(y_tr, tx_tr, lambda_)     # ridge regression
     # calculate the loss for train and test data
     rmse_tr = np.sqrt(2 * loss_tr)
