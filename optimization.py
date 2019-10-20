@@ -26,8 +26,7 @@ def cross_validation_lambda(y, tX, k_fold=4):
         loss_te = loss_te/(k_fold)
         rmse_tr.append(loss_tr)
         rmse_te.append(loss_te)
-    optimal_lambda = lambdas[np.argmin(rmse_te)]    
-    cross_validation_visualization(lambdas, rmse_tr, rmse_te)
+    optimal_lambda = lambdas[np.argmin(rmse_te)]
     return optimal_lambda
 
 def cross_validation_degree(y, tX, feat_ind, expansion_degrees, maxDeg=3, k_fold=4):
@@ -55,30 +54,26 @@ def cross_validation_degree(y, tX, feat_ind, expansion_degrees, maxDeg=3, k_fold
         loss_te = loss_te/(k_fold)
         rmse_tr.append(loss_tr)
         rmse_te.append(loss_te)
-    print('Training errors:', losses_tr)
-    print('Testing errors:', losses_te)
+  
     optimal_degree = np.argmin(losses_te)+1;
-    cross_validation_visualization(lambdas, rmse_tr, rmse_te)
-    print('Feature index', feat_ind, "'s optimal degree is", optimal_degree)
     return optimal_degree
 
-def cross_validation(y, tx, k_indices, k, lambda_=0.15):
+def cross_validation(y, tx, k_indices, k,init_w0,lambda_=0.15,gamma=0.003,max_iters=15):
     degree = 3
     # get k'th subgroup in test, others in train
     te_indices = k_indices[k]
     tr_indices = k_indices[~(np.arange(k_indices.shape[0]) == k)]
     tr_indices = tr_indices.reshape(-1)
-    print(tr_indices)
     tr_indices = tr_indices.astype(np.int64)
-    print(tr_indices.shape)
-    print(tx.shape)
     tx_tr = tx[tr_indices]
     y_tr = y[tr_indices]
     tx_te = tx[te_indices]
     y_te = y[te_indices]
     tx_tr = build_poly(tx_tr, degree)
     tx_te = build_poly(tx_te, degree)
-    weight, loss_tr = ridge_regression(y_tr, tx_tr, lambda_)     # ridge regression
+    
+    #weight, loss_tr = ridge_regression(y_tr, tx_tr, lambda_)     # ridge regression
+    weight, loss_tr = logistic_regression(y0_tr, tX0_tr, init_w0, max_iters, gamma)
     # calculate the loss for train and test data
     rmse_tr = np.sqrt(2 * loss_tr)
     rmse_te = np.sqrt(2 * compute_loss(y_te, tx_te, weight))
@@ -93,4 +88,23 @@ def build_k_indices(y, k_fold, seed):
     k_indices = [indices[k * interval: (k + 1) * interval]
                  for k in range(k_fold)]
     return np.array(k_indices)
+
+def cross_validation_degree_logistic(y0_tr,tX0_tr,y0_te,tX0_te,init_w0, max_iters, gamma):
+    deg0 = np.ones(tX0_tr.shape[1],np.int64)
+    degrees=range(1,4)
+    for feat_ind in range(len(deg0)):
+        grades=[]
+        for degree_ in degrees:
+            deg0[feat_ind]=degree_
+            tX0_te=build_multi_poly(tX0_te,deg0)
+            tX0_tr=build_multi_poly(tX0_tr,deg0)
+            init_w0, _ = least_squares(y0_tr, tX0_tr)
+            w0, loss0 = logistic_regression(y0_tr, tX0_tr, init_w0, max_iters, gamma)
+
+            y0_pred = predict_labels(w0, tX0_te)
+            res0 = np.where(y0_te[:,] == y0_pred[:,], 1, 0)
+            grades.append(np.mean(res0))
+            
+        deg0[feat_ind]= degrees[np.argmax(grades)]
+    return deg0
 
