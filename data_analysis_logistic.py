@@ -2,7 +2,7 @@ import numpy as np
 
 ##### Exploratory data analysis #####
 
-def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_fin, tX_fin, ids_fin,ratio=0.8,degree=3):
+def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_fin, tX_fin, ids_fin,ratio=0.8):
     
     y_tr, tX_tr, ids_tr, _ = extract_jet_num(jet_num, y_tr, tX_tr, ids_tr)
     y_fin, tX_fin, ids_fin, _ = extract_jet_num(jet_num, y_fin, tX_fin, ids_fin)
@@ -16,11 +16,9 @@ def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_fin, tX_fin, ids_fin,ratio=0.8
     tX_te = standardize_te(tX_te, m, std)
     tX_fin = standardize_te(tX_fin, m, std)
     
-    tX_tr=build_multi_poly(tX_tr, degree)
-    tX_te=build_multi_poly(tX_te, degree)
-    tX_fin=build_multi_poly(tX_fin, degree)
-    
-    
+    #tX_tr=build_multi_poly(tX_tr, degree)
+    #tX_te=build_multi_poly(tX_te, degree)
+    #tX_fin=build_multi_poly(tX_fin, degree)
     
     return y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te, y_fin, tX_fin, ids_fin
 
@@ -100,8 +98,8 @@ def build_poly(x, degree):
     return poly
 
 def build_multi_poly(x, degrees):
-    for i in reversed(range(x.shape[1])):
-        x = np.c_[x[:,:i], build_poly(x[:,i],degrees), x[:,i+1:]]
+    for i in reversed(range(x.shape[0])):
+        x = np.c_[x[:,:i], build_poly(x[:,i],degrees[i]), x[:,i+1:]]
         #poly = build_poly(X[:,i],degrees[i])
         #multi_poly = np.c_[multi_poly, poly]
     tx = np.c_[np.ones((x.shape[0], 1)), x]
