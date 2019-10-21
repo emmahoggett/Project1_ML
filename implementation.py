@@ -47,8 +47,8 @@ def ridge_regression(y, tx, lambda_):
     loss = compute_loss(y, tx, w)
     return w, loss
 
-def logistic_regression(y, tx, initial_w, max_iters, gamma,threshold= 1e-8):
-    w = initial_w
+def logistic_regression(y, tx, max_iters, gamma,threshold= 1e-8):
+    w = np.zeros(tx.shape[1])
     losses=[]
     for i in range(max_iters):
         sigma = 1/ (1+np.exp(-np.dot(tx,w)))
@@ -61,8 +61,8 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma,threshold= 1e-8):
         #np.dot(y.T,np.log(sigma))+np.dot((np.ones(y.shape[0])-y).T, np.log(1-sigma))
     return w, loss
 
-def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma,threshold= 1e-8):
-    w = initial_w
+def reg_logistic_regression(y, tx, lambda_, max_iters, gamma,threshold= 1e-8):
+    w = np.zeros(tx.shape[1])
     losses=[]
     for i in range(max_iters):
         sigma = 1/ (1+np.exp(-np.dot(tx,w)))
@@ -90,3 +90,7 @@ def compute_gradient(y, tx, w):
     e = y - tx.dot(w) #error
     grad = - (1/N) * tx.T.dot(e)
     return grad
+
+def sigmoid(tx,w):
+    return 1/ (1+np.exp(-np.dot(tx,w)))
+

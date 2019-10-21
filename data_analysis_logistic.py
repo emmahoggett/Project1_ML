@@ -1,3 +1,6 @@
+from implementation import*
+from proj1_helpers import *
+
 import numpy as np
 
 ##### Exploratory data analysis #####
@@ -98,11 +101,15 @@ def build_poly(x, degree):
     return poly
 
 def build_multi_poly(x, degrees):
-    for i in reversed(range(x.shape[0])):
+    for i in reversed(range(len(degrees))):
         x = np.c_[x[:,:i], build_poly(x[:,i],degrees[i]), x[:,i+1:]]
         #poly = build_poly(X[:,i],degrees[i])
         #multi_poly = np.c_[multi_poly, poly]
     tx = np.c_[np.ones((x.shape[0], 1)), x]
     return tx
 
-
+def build_poly_data(tX_tr,tX_te,tX_fin,degree):
+    tX_tr=build_multi_poly(tX_tr, degree)
+    tX_te=build_multi_poly(tX_te, degree)
+    tX_fin=build_multi_poly(tX_fin, degree)
+    return tX_tr,tX_te,tX_fin

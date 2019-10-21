@@ -1,7 +1,8 @@
 import numpy as np
+from proj1_helpers import *
+from data_analysis_logistic import *
+from optimization import*
 from implementation import *
-from data_analysis import *
-from plots import *
 
 ##### Cross validation #####
 
@@ -58,7 +59,7 @@ def cross_validation_degree(y, tX, feat_ind, expansion_degrees, maxDeg=3, k_fold
     optimal_degree = np.argmin(losses_te)+1;
     return optimal_degree
 
-def cross_validation(y, tx, k_indices, k,init_w0,lambda_=0.15,gamma=0.003,max_iters=15):
+def cross_validation(y, tx, k_indices, k,init_w0,lambda_=0.15,gamma=0.5,max_iters=15):
     degree = 3
     # get k'th subgroup in test, others in train
     te_indices = k_indices[k]
@@ -89,22 +90,48 @@ def build_k_indices(y, k_fold, seed):
                  for k in range(k_fold)]
     return np.array(k_indices)
 
-def cross_validation_degree_logistic(y0_tr,tX0_tr,y0_te,tX0_te,init_w0, max_iters, gamma):
-    deg0 = np.ones(tX0_tr.shape[1],np.int64)
-    degrees=range(1,4)
-    for feat_ind in range(len(deg0)):
+def best_degree_logistic_regression(tX_te, tX_tr, y_tr,y_te, degree_max=10, max_iter=150, gamma=0.01):
+    deg = np.ones(tX_tr.shape[1],np.int64)
+    degrees=range(1,degree_max)
+    for feat_ind in range(len(deg)):
+        rmse_te=[]
         grades=[]
+        deg_temp = np.ones(tX_tr.shape[1],np.int64)
         for degree_ in degrees:
-            deg0[feat_ind]=degree_
-            tX0_te=build_multi_poly(tX0_te,deg0)
-            tX0_tr=build_multi_poly(tX0_tr,deg0)
-            init_w0, _ = least_squares(y0_tr, tX0_tr)
-            w0, loss0 = logistic_regression(y0_tr, tX0_tr, init_w0, max_iters, gamma)
+            deg_temp[feat_ind]=degree_
+            tX_te_tmp=build_multi_poly(tX_te,deg_temp)
+            tX_tr_tmp=build_multi_poly(tX_tr,deg_temp)
+            w, _ = logistic_regression(y_tr, tX_tr_tmp, max_iter, gamma)
 
-            y0_pred = predict_labels(w0, tX0_te)
-            res0 = np.where(y0_te[:,] == y0_pred[:,], 1, 0)
-            grades.append(np.mean(res0))
-            
-        deg0[feat_ind]= degrees[np.argmax(grades)]
-    return deg0
+            #sigma=sigmoid(tX_te_tmp,w)
+            #loss_te = -np.mean(y_te*np.log(sigma)+(1-y_te)*np.log(1-sigma))
+            #rmse_te.append(loss_te)
+            y_pred = predict_labels(w,tX_te_tmp)
+            res = np.where(y_te[:,] == y_pred[:,], 1, 0)
+            grade = np.mean(res)
+            grades.append(grade)
+        deg[feat_ind]= degrees[np.argmax(grades)]
+    return deg
 
+def best_degree_least_squares(tX_te, tX_tr, y_tr,y_te, degree_max=10):
+    deg = np.ones(tX_tr.shape[1],np.int64)
+    degrees=range(1,degree_max)
+    for feat_ind in range(len(deg)):
+        rmse_te=[]
+        grades=[]
+        deg_temp = np.ones(tX_tr.shape[1],np.int64)
+        for degree_ in degrees:
+            deg_temp[feat_ind]=degree_
+            tX_te_tmp=build_multi_poly(tX_te,deg_temp)
+            tX_tr_tmp=build_multi_poly(tX_tr,deg_temp)
+            w, _ = least_squares(y_tr,tX_tr_tmp)
+
+            #sigma=sigmoid(tX_te_tmp,w)
+            #loss_te = -np.mean(y_te*np.log(sigma)+(1-y_te)*np.log(1-sigma))
+            #rmse_te.append(loss_te)
+            y_pred = predict_labels(w,tX_te_tmp)
+            res = np.where(y_te[:,] == y_pred[:,], 1, 0)
+            grade = np.mean(res)
+            grades.append(grade)
+        deg[feat_ind]= degrees[np.argmax(grades)]
+    return deg
