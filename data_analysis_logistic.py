@@ -13,9 +13,10 @@ def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_fin, tX_fin, ids_fin,ratio=0.8
     tX_tr = extract_values(tX_tr, ids_tr)
     tX_fin = extract_values(tX_fin, ids_fin)
     
-    tX_tr, tX_te, y_tr, y_te, ids_tr, ids_te=split_data(tX_tr, y_tr, ids_tr, ratio, seed=1)
+    tX_tr_new, tX_te, y_tr_new, y_te, ids_tr, ids_te=split_data(tX_tr, y_tr, ids_tr, ratio, seed=1)
     
-    tX_tr, m, std = standardize(tX_tr)
+    tX_tr_new, m, std = standardize(tX_tr_new)
+    tX_tr=standardize_te(tX_tr, m, std)
     tX_te = standardize_te(tX_te, m, std)
     tX_fin = standardize_te(tX_fin, m, std)
     
@@ -23,7 +24,7 @@ def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_fin, tX_fin, ids_fin,ratio=0.8
     #tX_te=build_multi_poly(tX_te, degree)
     #tX_fin=build_multi_poly(tX_fin, degree)
     
-    return y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te, y_fin, tX_fin, ids_fin
+    return y_tr, tX_tr,y_tr_new, tX_tr_new, ids_tr, y_te, tX_te, ids_te, y_fin, tX_fin, ids_fin
 
 # Extract the data points with the same number of jets
 
