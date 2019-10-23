@@ -3,29 +3,60 @@ import numpy as np
 
 ##### MACHINE LEARNING METHODS #####
 
+
+##### IMPLEMENTATION OF LEAST SQUARES GRADIENT DESCENT #####
+
+
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
-    """Gradient descent algorithm."""
+    """Gradient descent optimization."""
+    
+    N = y.shape[0]
+    
+    # Initialise the output variables.
     w = initial_w
-    loss = 0
-    for n_iter in range(max_iters):
-        loss = compute_loss(y, tx, w) #compute loss with MSE formula
-        grad = compute_gradient(y, tx, w)
-        w = w - gamma*grad;
+    err = y - tx.dot(w)
+    loss = 1/(2*N) * err.dot(err)
+    
+    for i in range(max_iters):
+        err = y - tx.dot(w)
+        grad = -tx.T.dot(err) / N # Compute the gradient.
+        w = w - gamma*grad # Compute the updated weights.
+        loss = 1/(2*N) * err.dot(err) # Compute the new loss value.
+    
     return w, loss
 
-def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma):
-    """Stochastic gradient descent algorithm."""
+
+
+##### IMPLEMENTATION OF LEAST SQUARES STOCHASTIC GRADIENT DESCENT #####
+
+
+def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
+    """Stochastic gradient descent optimization."""
+    
+    np.random.seed()
+    N = y.shape[0]
+    
+    # Initialise the output variables.
     w = initial_w
-    loss = 0
-    for n_iter in range(max_iters):
-        g = 0
-        loss = 0
-        for minibatch_y, minibatch_tx in batch_iter(y, tx, batch_size):
-            loss = loss + compute_loss(minibatch_y, minibatch_tx, w)
-            g = g + compute_gradient(minibatch_y, minibatch_tx, w)
-        g = (1/batch_size)*g    
-        w = w - gamma*g
+    err = y - tx.dot(w)
+    loss = 1/(2*N) * err.dot(err)
+    
+    for i in range(max_iters):
+        
+        sample_index = np.random.randint(0, N) # Sample one data point at random
+        y_sample = y[sample_index]
+        tx_sample = tx[sample_index, :]
+        
+        err_sample = y_sample - tx_sample.dot(w)
+        grad_sample = -tx_sample.T.dot(err_sample) # Compute the gradient of the loss contributed by the sample point.
+        w = w - gamma*grad_sample # Compute the updated weights.
+        
+        err = y - tx.dot(w)
+        loss = 1/(2*N) * err.dot(err) # Compute the new loss value.
+        
     return w, loss
+
+
 
 def least_squares(y, tx):
     """Calculate the least squares solution."""
@@ -47,8 +78,8 @@ def ridge_regression(y, tx, lambda_):
     loss = compute_loss(y, tx, w)
     return w, loss
 
-def logistic_regression(y, tx,init_w0, max_iters, gamma,threshold= 1e-8):
-    w =init_w0
+def logistic_regression(y, tx, initial_w, max_iters, gamma,threshold= 1e-8):
+    w = initial_w
     losses=[]
     for i in range(max_iters):
         sigma = 1/ (1+np.exp(-np.dot(tx,w)))
@@ -61,8 +92,8 @@ def logistic_regression(y, tx,init_w0, max_iters, gamma,threshold= 1e-8):
         #np.dot(y.T,np.log(sigma))+np.dot((np.ones(y.shape[0])-y).T, np.log(1-sigma))
     return w, loss
 
-def reg_logistic_regression(y, tx,init_w0, lambda_, max_iters, gamma,threshold= 1e-8):
-    w = init_w0
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma,threshold= 1e-8):
+    w = initial_w
     losses=[]
     for i in range(max_iters):
         sigma = 1/ (1+np.exp(-np.dot(tx,w)))
@@ -74,8 +105,10 @@ def reg_logistic_regression(y, tx,init_w0, lambda_, max_iters, gamma,threshold= 
         w = w - grad*gamma
     return w, loss
 
-#############################################
-##### COSTS #####
+
+
+
+######################
 
 def compute_loss(y, tx, w):
     """Compute the loss with MSE."""
@@ -83,17 +116,3 @@ def compute_loss(y, tx, w):
     err = y - tx.dot(w) #error
     loss = (1/(2*N)) * err.dot(err)
     return loss
-
-def compute_gradient(y, tx, w):
-    """Compute the gradient."""
-    N = y.shape[0]
-    e = y - tx.dot(w) #error
-    grad = - (1/N) * tx.T.dot(e)
-    return grad
-
-def sigmoid(tx,w):
-    return 1/ (1+np.exp(-np.dot(tx,w)))
-
-def compute_loss_reg_logistic(y, tx, weight):
-    sigma=sigmoid(tx,weight)
-    return -np.mean(y*np.log(sigma)+(1-y)*np.log(1-sigma))
