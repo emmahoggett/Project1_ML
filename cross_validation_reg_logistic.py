@@ -1,11 +1,10 @@
 import numpy as np
 from proj1_helpers import *
 from data_analysis_logistic import *
-from optimization import*
-from implementation import *
+from implementation import*
 
 def test_lambda_cst(y, tx,y_te,tx_te ,init_w, max_iters, gamma):
-    lambdas=np.logspace(-4,0,30)
+    lambdas=np.logspace(-4,3,30)
     rmse=[]
     for lambda_ in lambdas:
         w,_ = reg_logistic_regression(y, tx ,init_w, lambda_, max_iters, gamma)
@@ -20,7 +19,7 @@ def test_lambda_cst(y, tx,y_te,tx_te ,init_w, max_iters, gamma):
 def cross_validation_lambda_reg_logistic(y, tX, max_iters, gamma, k_fold=4):
     seed = 1
     #lambdas = [0, 0.1, 0.15, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 4, 5]
-    lambdas=np.logspace(-4,0,30)
+    lambdas=np.logspace(-4,3,30)
     # split data in k fold
     k_indices = build_k_indices(y, k_fold, seed)
     # define lists to store the loss of training data and test data
@@ -113,3 +112,13 @@ def cross_validation_reg_logistic_poly(y, x, k_indices, k, lambda_, max_iters, g
     grade = np.mean(res)
     
     return grade
+
+def build_k_indices(y, k_fold, seed):
+    # build k indices for k-fold 
+    num_row = y.shape[0]
+    interval = int(num_row / k_fold)
+    np.random.seed(seed)
+    indices = np.random.permutation(num_row)
+    k_indices = [indices[k * interval: (k + 1) * interval]
+                 for k in range(k_fold)]
+    return np.array(k_indices)

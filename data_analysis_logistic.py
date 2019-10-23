@@ -1,5 +1,6 @@
 from implementation import*
 from proj1_helpers import *
+from scipy import stats
 
 import numpy as np
 
@@ -10,15 +11,18 @@ def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_fin, tX_fin, ids_fin,ratio=0.8
     y_tr, tX_tr, ids_tr, _ = extract_jet_num(jet_num, y_tr, tX_tr, ids_tr)
     y_fin, tX_fin, ids_fin, _ = extract_jet_num(jet_num, y_fin, tX_fin, ids_fin)
     
-    tX_tr = extract_values(tX_tr, ids_tr)
-    tX_fin = extract_values(tX_fin, ids_fin)
+    tX_tr, ids_tr,y_tr = extract_values(tX_tr, ids_tr,y_tr)
+    tX_tr_new, tX_te, y_tr_new, y_te, ids_tr_new, ids_te=split_data(tX_tr, y_tr, ids_tr, ratio, seed=1)
     
-    tX_tr_new, tX_te, y_tr_new, y_te, ids_tr, ids_te=split_data(tX_tr, y_tr, ids_tr, ratio, seed=1)
     
     tX_tr_new, m, std = standardize(tX_tr_new)
     tX_tr=standardize_te(tX_tr, m, std)
     tX_te = standardize_te(tX_te, m, std)
     tX_fin = standardize_te(tX_fin, m, std)
+    
+    tX_tr_new, ids_tr_new,y_tr_new=extract_outliers(tX_tr_new,ids_tr_new,y_tr_new)
+    tX_tr, ids_tr,y_tr=extract_outliers(tX_tr, ids_tr,y_tr)
+    tX_te, ids_te, y_te=extract_outliers(tX_te, ids_te, y_te)
     
     #tX_tr=build_multi_poly(tX_tr, degree)
     #tX_te=build_multi_poly(tX_te, degree)
@@ -34,30 +38,33 @@ def extract_jet_num(jet_num, y, tX, ids):
     tX_jet_num = tX[is_jet_num,:]
     if (jet_num == 0):
         #is_not_999 = np.delete(np.arange(30), [4, 5, 6, 12, 22, 23, 24, 26, 27, 29])
-        is_not_999 = np.delete(np.arange(30), [4, 5, 6, 12, 22, 23, 24, 25, 26, 27, 28, 29]) 
+        is_not_999 = np.delete(np.arange(30), [ 4, 5, 6, 12, 22, 23, 24, 25, 26, 27, 28, 29]) 
     elif (jet_num == 1):
         #is_not_999 = np.delete(np.arange(30), [4, 5, 6, 12, 22, 26, 27])
-        is_not_999 = np.delete(np.arange(30), [4, 5, 6, 8, 12, 22, 25, 26, 27, 28])
+        is_not_999 = np.delete(np.arange(30), [ 4, 5, 6, 8, 12, 22, 25, 26, 27, 28])
     else: 
         #is_not_999 = np.delete(np.arange(30), [22])
-        is_not_999 = np.delete(np.arange(30), [8, 22, 25, 28])
+        is_not_999 = np.delete(np.arange(30), [ 8, 22, 25, 28])
     new_tX = tX_jet_num[:,is_not_999] #We take out the values at -999
     new_ids = ids[is_jet_num]
     return new_y, new_tX, new_ids, tX_jet_num
 
 # Remaining -999 values
-def extract_values(tX, ids):
+def extract_values(tX, ids,y):
+    z=tX
+    y=y[(z!=-999).all(axis=1)]
+    ids=ids[(z!=-999).all(axis=1)]
+    tX=tX[(z!=-999).all(axis=1)]
     
-    for i in range(tX.shape[1]):
-        is_undefined = tX[:,i] == -999
-        mean = tX[is_undefined == False, i].mean()
-        new_tX = np.copy(tX)
+    return tX,ids,y
+
+def extract_outliers(tX,ids,y):
+    z =np.abs(tX)
+    y=y[(z < 3).all(axis=1)]
+    ids=ids[(z < 3).all(axis=1)]
+    tX=tX[(z < 3).all(axis=1)]
         
-        for j in range(new_tX.shape[0]):
-            if is_undefined[j]:
-                new_tX[j,i] = mean
-        
-    return new_tX
+    return tX,ids,y
 
 #Standardize the original dataset 
 
