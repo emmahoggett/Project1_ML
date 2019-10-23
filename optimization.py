@@ -10,7 +10,7 @@ from cross_validation_reg_logistic import*
 def cross_validation_lambda(y, tX, k_fold=4):
     seed = 1
     #lambdas = [0, 0.1, 0.15, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 4, 5]
-    lambdas = np.logspace(-7,6,100)
+    lambdas = np.logspace(-4,6,100)
     # split data in k fold
     k_indices = build_k_indices(y, k_fold, seed)
     # define lists to store the loss of training data and test data
