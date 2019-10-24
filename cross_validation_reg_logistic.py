@@ -19,7 +19,7 @@ def test_lambda_cst(y, tx,y_te,tx_te ,init_w, max_iters, gamma):
 def cross_validation_lambda_reg_logistic(y, tX, max_iters, gamma, k_fold=4):
     seed = 1
     #lambdas = [0, 0.1, 0.15, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 4, 5]
-    lambdas=np.logspace(-4,3,30)
+    lambdas=np.logspace(-5,2,20)
     # split data in k fold
     k_indices = build_k_indices(y, k_fold, seed)
     # define lists to store the loss of training data and test data
@@ -75,8 +75,8 @@ def cross_validation_deg_reg_logistic(y, tX, max_iters, gamma,lambda_, k_fold=4,
     for ind in range(tX.shape[1]):
         rmse_te = []
         for degree_ in degrees:
-            grade_te = 0
             optimal_deg[ind]=degree_
+            grade_te=0
 
             for k in range(k_fold):
                 gr_te = cross_validation_reg_logistic_poly(y, tX, k_indices, k, lambda_, max_iters, gamma,optimal_deg)
