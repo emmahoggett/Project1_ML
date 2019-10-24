@@ -2,40 +2,27 @@ import numpy as np
 
 ##### Exploratory data analysis #####
 
-<<<<<<< HEAD
 def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te, y_fin, tX_fin, ids_fin):
     y_tr, tX_tr, ids_tr = extract_jet_num(jet_num, y_tr, tX_tr, ids_tr)
     y_te, tX_te, ids_te = extract_jet_num(jet_num, y_te, tX_te, ids_te)
     y_fin, tX_fin, ids_fin = extract_jet_num(jet_num, y_fin, tX_fin, ids_fin)
     
-    tX_tr = extract_values(tX_tr, ids_tr)
-    tX_te = extract_values(tX_te, ids_te)
-    tX_fin = extract_values(tX_fin, ids_fin)
-=======
-def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_fin, tX_fin, ids_fin,ratio=0.8):
+    tX_tr = extract_values(tX_tr)
+    tX_te = extract_values(tX_te)
+    tX_fin = extract_values(tX_fin)
     
-    y_tr, tX_tr, ids_tr, _ = extract_jet_num(jet_num, y_tr, tX_tr, ids_tr)
-    y_fin, tX_fin, ids_fin, _ = extract_jet_num(jet_num, y_fin, tX_fin, ids_fin)
+    tX_tr, m, std = standardize(tX_tr)
+    tX_te = standardize_te(tX_te, m, std)
+    tX_fin = standardize_te(tX_fin, m, std)
     
-    tX_tr = extract_values(tX_tr, ids_tr)
-    tX_fin = extract_values(tX_fin, ids_fin)
+    tX_tr, ids_tr, y_tr = extract_outliers(tX_tr, ids_tr, y_tr)
+    tX_te, ids_te, y_te = extract_outliers(tX_tr, ids_tr, y_tr)
+    #tX_fin, ids_fin, y_fin = extract_outliers(tX_fin, ids_fin, y_fin)
     
-    tX_tr, tX_te, y_tr, y_te, ids_tr, ids_te=split_data(tX_tr, y_tr, ids_tr, ratio, seed=1)
->>>>>>> 467ea57458254020ae3e0460e2febc4d911a2f71
-    
-    #tX_tr, m, std = standardize(tX_tr)
-    #tX_te = standardize_te(tX_te, m, std)
-    #tX_fin = standardize_te(tX_fin, m, std)
-    
-<<<<<<< HEAD
-=======
     #tX_tr=build_multi_poly(tX_tr, degree)
     #tX_te=build_multi_poly(tX_te, degree)
     #tX_fin=build_multi_poly(tX_fin, degree)
     
-    
-    
->>>>>>> 467ea57458254020ae3e0460e2febc4d911a2f71
     return y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te, y_fin, tX_fin, ids_fin
 
 # Extract the data points with the same number of jets
@@ -58,18 +45,26 @@ def extract_jet_num(jet_num, y, tX, ids):
     return new_y, new_tX, new_ids 
 
 # Remaining -999 values
-def extract_values(tX, ids):
-    
+def extract_values(tX):
     for i in range(tX.shape[1]):
-        is_undefined = tX[:,i] == -999
-        mean = tX[is_undefined == False, i].mean()
-        new_tX = np.copy(tX)
+        is_defined = np.where(tX[:,i] != -999, True, False)
+        tX_defined = tX[is_defined,i]
+        mean = tX_defined.mean()
+        for j in range(tX.shape[0]):
+            if (tX[j,i] == -999):
+                tX[j,i] = mean
+    return tX
+
+
+# Extract the outliers
+
+def extract_outliers(tX,ids,y):
+    z =np.abs(tX)
+    y=y[(z < 3).all(axis=1)]
+    ids=ids[(z < 3).all(axis=1)]
+    tX=tX[(z < 3).all(axis=1)]
         
-        for j in range(new_tX.shape[0]):
-            if is_undefined[j]:
-                new_tX[j,i] = mean
-        
-    return new_tX
+    return tX,ids,y
 
 #Standardize the original dataset 
 
@@ -114,18 +109,9 @@ def build_poly(x, degree):
     return poly
 
 def build_multi_poly(x, degrees):
-<<<<<<< HEAD
-    for i in reversed(range(x.shape[1])):
-        x = np.c_[x[:,:i], build_poly(x[:,i],degrees[i]), x[:,i+1:]]
-    tx = np.c_[np.ones((x.shape[0], 1)), x]
-    return tx
-=======
+    #print('nb degrés : ', len(degrees))
+    #print('x : ', x.shape[1])
     for i in reversed(range(len(degrees))):
         x = np.c_[x[:,:i], build_poly(x[:,i],degrees[i]), x[:,i+1:]]
-        #poly = build_poly(X[:,i],degrees[i])
-        #multi_poly = np.c_[multi_poly, poly]
     tx = np.c_[np.ones((x.shape[0], 1)), x]
     return tx
-
-
->>>>>>> 467ea57458254020ae3e0460e2febc4d911a2f71
