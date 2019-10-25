@@ -6,13 +6,13 @@ import numpy as np
 
 ##### Exploratory data analysis #####
 
-def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_fin, tX_fin, ids_fin,ratio=0.8):
-    
+def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_fin, tX_fin, ids_fin,mass,ratio=0.8):
+    "The mass takes only the values 1 and 0, 1 correspond mass and 0 no mass"
     y_tr=rescale_y(y_tr, ids_tr, -1, 0)
     y_fin=rescale_y(y_fin, ids_fin, -1,0)
     
-    y_tr, tX_tr, ids_tr, _ = extract_jet_num(jet_num, y_tr, tX_tr, ids_tr)
-    y_fin, tX_fin, ids_fin, _ = extract_jet_num(jet_num, y_fin, tX_fin, ids_fin)
+    y_tr, tX_tr, ids_tr, _ = extract_jet_num(jet_num, y_tr, tX_tr, ids_tr,mass)
+    y_fin, tX_fin, ids_fin, _ = extract_jet_num(jet_num, y_fin, tX_fin, ids_fin,mass)
     
     tX_tr = extract_999(tX_tr)
     tX_tr_new, tX_te, y_tr_new, y_te, ids_tr_new, ids_te=split_data(tX_tr, y_tr, ids_tr, ratio, seed=1)
@@ -39,19 +39,38 @@ def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_fin, tX_fin, ids_fin,ratio=0.8
 
 # Extract the data points with the same number of jets
 
-def extract_jet_num(jet_num, y, tX, ids):
-    is_jet_num = np.where(tX[:,22] == jet_num, True, False)
-    new_y = y[is_jet_num] #We only keep the training points with the desidered jet_num value
-    tX_jet_num = tX[is_jet_num,:]
-    if (jet_num == 0):
-        #is_not_999 = np.delete(np.arange(30), [4, 5, 6, 12, 22, 23, 24, 26, 27, 29])
-        is_not_999 = np.delete(np.arange(30), [ 4, 5, 6, 12, 22, 23, 24, 25, 26, 27, 28, 29]) 
-    elif (jet_num == 1):
-        #is_not_999 = np.delete(np.arange(30), [4, 5, 6, 12, 22, 26, 27])
-        is_not_999 = np.delete(np.arange(30), [ 4, 5, 6, 8, 12, 22, 25, 26, 27, 28])
-    else: 
-        #is_not_999 = np.delete(np.arange(30), [22])
-        is_not_999 = np.delete(np.arange(30), [ 8, 22, 25, 28])
+def extract_jet_num(jet_num, y, tX, ids,mass):
+    
+    if mass==0:
+        
+        is_jet_num = np.where((tX[:,22] == jet_num) & (tX[:,0] == -999) , True, False)
+        new_y = y[is_jet_num] #We only keep the training points with the desidered jet_num value
+        tX_jet_num = tX[is_jet_num,:]
+        if (jet_num == 0):
+            #is_not_999 = np.delete(np.arange(30), [4, 5, 6, 12, 22, 23, 24, 26, 27, 29])
+            is_not_999 = np.delete(np.arange(30), [0, 4, 5, 6, 12, 22, 23, 24, 25, 26, 27, 28, 29]) 
+        elif (jet_num == 1):
+            #is_not_999 = np.delete(np.arange(30), [4, 5, 6, 12, 22, 26, 27])
+            is_not_999 = np.delete(np.arange(30), [0, 4, 5, 6, 8, 12, 22, 25, 26, 27, 28])
+        else: 
+            #is_not_999 = np.delete(np.arange(30), [22])
+            is_not_999 = np.delete(np.arange(30), [0, 8, 22, 25, 28])
+    
+    
+    if mass==1:
+        
+        is_jet_num = np.where((tX[:,22] == jet_num) & (tX[:,0] != -999) , True, False)
+        new_y = y[is_jet_num] #We only keep the training points with the desidered jet_num value
+        tX_jet_num = tX[is_jet_num,:]
+        if (jet_num == 0):
+            #is_not_999 = np.delete(np.arange(30), [4, 5, 6, 12, 22, 23, 24, 26, 27, 29])
+            is_not_999 = np.delete(np.arange(30), [ 4, 5, 6, 12, 22, 23, 24, 25, 26, 27, 28, 29]) 
+        elif (jet_num == 1):
+            #is_not_999 = np.delete(np.arange(30), [4, 5, 6, 12, 22, 26, 27])
+            is_not_999 = np.delete(np.arange(30), [ 4, 5, 6, 8, 12, 22, 25, 26, 27, 28])
+        else: 
+            #is_not_999 = np.delete(np.arange(30), [22])
+            is_not_999 = np.delete(np.arange(30), [ 8, 22, 25, 28])
     new_tX = tX_jet_num[:,is_not_999] #We take out the values at -999
     new_ids = ids[is_jet_num]
     return new_y, new_tX, new_ids, tX_jet_num
