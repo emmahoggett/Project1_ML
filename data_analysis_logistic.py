@@ -23,9 +23,9 @@ def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_fin, tX_fin, ids_fin,mass,rati
     tX_te = standardize_te(tX_te, m, std)
     tX_fin = standardize_te(tX_fin, m, std)
     
-    tX_tr_new, ids_tr_new,y_tr_new=extract_outliers(tX_tr_new,ids_tr_new,y_tr_new)
-    tX_tr, ids_tr,y_tr=extract_outliers(tX_tr, ids_tr,y_tr)
-    tX_te, ids_te, y_te=extract_outliers(tX_te, ids_te, y_te)
+    #tX_tr_new, ids_tr_new,y_tr_new=extract_outliers(tX_tr_new,ids_tr_new,y_tr_new)
+    #tX_tr, ids_tr,y_tr=extract_outliers(tX_tr, ids_tr,y_tr)
+    #tX_te, ids_te, y_te=extract_outliers(tX_te, ids_te, y_te)
     
     y_tr=rescale_y(y_tr, ids_tr, -1, 0)
     y_fin=rescale_y(y_fin, ids_fin, -1,0)
@@ -71,6 +71,7 @@ def extract_jet_num(jet_num, y, tX, ids,mass):
         else: 
             #is_not_999 = np.delete(np.arange(30), [22])
             is_not_999 = np.delete(np.arange(30), [ 8, 22, 25, 28])
+            
     new_tX = tX_jet_num[:,is_not_999] #We take out the values at -999
     new_ids = ids[is_jet_num]
     return new_y, new_tX, new_ids, tX_jet_num
@@ -151,9 +152,14 @@ def build_multi_poly(x, degrees):
     tx = np.c_[np.ones((x.shape[0], 1)), x]
     return tx
 
-def build_poly_data(tX_tr,tX_tr_new,tX_te,tX_fin,degree):
-    tX_tr=build_multi_poly(tX_tr, degree)
-    tX_tr_new=build_multi_poly(tX_tr_new, degree)
-    tX_te=build_multi_poly(tX_te, degree)
-    tX_fin=build_multi_poly(tX_fin, degree)
-    return tX_tr,tX_tr_new,tX_te,tX_fin
+def build_poly_data(tX_tr, tX_tr_new, tX_te, tX_fin, degree):
+    tX_tr = build_multi_poly(tX_tr, degree)
+    tX_tr_new = build_multi_poly(tX_tr_new, degree)
+    tX_te = build_multi_poly(tX_te, degree)
+    tX_fin = build_multi_poly(tX_fin, degree)
+    print("Shape of tr, te, tr_new and fin")
+    print(tX_tr.shape)
+    print(tX_te.shape)
+    print(tX_tr_new.shape)
+    print(tX_fin.shape)  
+    return tX_tr, tX_tr_new, tX_te, tX_fin
