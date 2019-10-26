@@ -18,7 +18,7 @@ A train data and a testing data, where the results are unknown, are needed in `.
 * [Class Project 1](https://github.com/epfml/ML_course/raw/master/projects/project1/project1_description.pdf) : Description of the project
 
 ### Authors
-Groupe name: [ML_budget] (https://www.aicrowd.com/teams/ML_Budget)
+Groupe name: [MLBudget] (https://www.aicrowd.com/teams/ML_Budget)
 Members: Aubet Louise, Cadillon Alexandre, Hoggett Emma
 
 ### Project Status
