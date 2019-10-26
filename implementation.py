@@ -91,9 +91,10 @@ def compute_gradient(y, tx, w):
     grad = - (1/N) * tx.T.dot(e)
     return grad
 
-def sigmoid(tx,w):
-    return 1/ (1+np.exp(-np.dot(tx,w)))
-
-def compute_loss_reg_logistic(y, tx, weight):
-    sigma=sigmoid(tx,weight)
+def compute_loss_logistic(y, tx, weight):
+    sigma = 1/ (1+np.exp(-np.dot(tx,weight)))
     return -np.mean(y*np.log(sigma)+(1-y)*np.log(1-sigma))
+
+def compute_loss_reg_logistic(y, tx, weight,lambda_):
+    sigma = 1/ (1+np.exp(-np.dot(tx,weight)))
+    return -np.mean(y*np.log(sigma)+(1-y)*np.log(1-sigma)+lambda_*np.linalg.norm(weight))

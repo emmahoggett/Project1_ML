@@ -76,16 +76,16 @@ def cross_validation_deg_reg_logistic(y, tX, max_iters, gamma,lambda_, k_fold=4,
         rmse_te = []
         for degree_ in degrees:
             optimal_deg[ind]=degree_
-            grade_te=0
+            loss_te=0
 
             for k in range(k_fold):
-                gr_te = cross_validation_reg_logistic_poly(y, tX, k_indices, k, lambda_, max_iters, gamma,optimal_deg)
-                grade_te = grade_te + gr_te
+                l_te = cross_validation_reg_logistic_poly(y, tX, k_indices, k, lambda_, max_iters, gamma,optimal_deg)
+                loss_te = loss_te + l_te
 
-            grade_te = grade_te/(k_fold)
-            rmse_te.append(grade_te)
+            loss_te = loss_te/(k_fold)
+            rmse_te.append(loss_te)
 
-        optimal_deg[ind] = degrees[np.argmax(rmse_te)]
+        optimal_deg[ind] = degrees[np.argmin(rmse_te)]
     return optimal_deg
 
 def cross_validation_reg_logistic_poly(y, x, k_indices, k, lambda_, max_iters, gamma,deg):
@@ -107,11 +107,10 @@ def cross_validation_reg_logistic_poly(y, x, k_indices, k, lambda_, max_iters, g
     w0=np.zeros(tx_tr_tmp.shape[1])
     weight, _= reg_logistic_regression(y_tr, tx_tr_tmp,w0, lambda_, max_iters, gamma)
     # calculate the loss for train and test data
-    y_pred = predict_labels(weight, tx_te_tmp)
-    res = np.where(y_te[:,] == y_pred[:,], 1, 0)
-    grade = np.mean(res)
+    loss_te=compute_loss_reg_logistic(y_te, tx_te_tmp, weight,lambda_)
     
-    return grade
+    
+    return loss_te
 
 def build_k_indices(y, k_fold, seed):
     # build k indices for k-fold 
