@@ -32,7 +32,7 @@ def cross_validation_lambda(y, tX, k_fold=4):
     optimal_lambda = lambdas[np.argmin(rmse_te)]
     return optimal_lambda
 
-def cross_validation_degree(y, X, feat_ind, expansion_degrees, maxDeg=3, k_fold=4):
+def cross_validation_degree(y, X, feat_ind, expansion_degrees, maxDeg=3, k_fold=):
     """
     feat_ind : index of the feature over which cross validation is done to find the optimal_degree
     expansion_degrees : indicates to what order should the other features be during the cross validation.
@@ -47,7 +47,7 @@ def cross_validation_degree(y, X, feat_ind, expansion_degrees, maxDeg=3, k_fold=
         loss_tr = 0.0
         loss_te = 0.0
         expansion_degrees[feat_ind] = degree # change degree of feature at index 'feat_ind'
-        tX = build_multi_poly(X, expansion_degrees)
+        tX = expand(X, expansion_degrees)
         for k in range(k_fold):
             l_tr, l_te = cross_validation(y, tX, k_indices, k)
             loss_tr = loss_tr + l_tr
@@ -69,8 +69,8 @@ def cross_validation(y, tx, k_indices, k, lambda_=0.12, gamma=0.5,max_iters=15):
     y_tr = y[tr_indices]
     tx_te = tx[te_indices]
     y_te = y[te_indices]
-    #tx_tr = build_poly(tx_tr, degree)
-    #tx_te = build_poly(tx_te, degree)
+    #tx_tr = expand_vector(tx_tr, degree)
+    #tx_te = expand_vector(tx_te, degree)
     weight, loss_tr = ridge_regression(y_tr, tx_tr, lambda_)     # ridge regression
     #weight, loss_tr = logistic_regression(y0_tr, tX0_tr, init_w0, max_iters, gamma)
     # calculate the loss for train and test data
@@ -98,8 +98,8 @@ def best_degree_logistic_regression(tX_tr, y_tr, degree_max=6, max_iter=150, gam
         deg_temp = np.ones(tX_tr.shape[1],np.int64)
         for degree_ in degrees:
             deg_temp[feat_ind]=degree_
-            tX_te_tmp=build_multi_poly(tX_te,deg_temp)
-            tX_tr_tmp=build_multi_poly(tX_tr,deg_temp)
+            tX_te_tmp=expand(tX_te,deg_temp)
+            tX_tr_tmp=expand(tX_tr,deg_temp)
             
             init_w,_=least_squares(y_tr, tX_tr_tmp)
             
@@ -124,8 +124,8 @@ def best_degree_least_squares(tX_te, tX_tr, y_tr,y_te, degree_max=6):
         deg_temp = np.ones(tX_tr.shape[1],np.int64)
         for degree_ in degrees:
             deg_temp[feat_ind]=degree_
-            tX_te_tmp=build_multi_poly(tX_te,deg_temp)
-            tX_tr_tmp=build_multi_poly(tX_tr,deg_temp)
+            tX_te_tmp=expand(tX_te,deg_temp)
+            tX_tr_tmp=expand(tX_tr,deg_temp)
             w, _ = least_squares(y_tr,tX_tr_tmp)
 
             #sigma=sigmoid(tX_te_tmp,w)
