@@ -173,5 +173,5 @@ y3u_pred = predict_labels(w3u, tX3u_pred)
 y_pred = np.concatenate([y0d_pred, y1d_pred, y2d_pred, y3d_pred, y0u_pred, y1u_pred, y2u_pred, y3u_pred])
 ids_pred = np.concatenate([ids0d_pred, ids1d_pred, ids2d_pred, ids3d_pred, ids0u_pred, ids1u_pred, ids2u_pred, ids3u_pred])
 
-OUTPUT_PATH = 'results_ridge2.csv' #name of output file for submission
+OUTPUT_PATH = 'results.csv' #name of output file for submission
 create_csv_submission(ids_pred, y_pred, OUTPUT_PATH)
