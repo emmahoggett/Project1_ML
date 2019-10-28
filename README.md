@@ -6,7 +6,7 @@ EPFL Machine Learning Higgs is a project that was launched in 2014 by the [CERN]
 After the model is determined with the training data, the results are submitted on the [AIcrowd](https://www.aicrowd.com/challenges/epfl-machine-learning-higgs-2019) platform, in order to measure the accuracy of the model's predictions.
 
 ### Getting Started
-This version was designed for python 3.6.6 or higher. To run the model's calculation, it is only needed to execute the file `run.py`. On the terminal, the command is `python run.py`. The code should return a `.csv` file with all its predictions, from the test data.
+This version was designed for python 3.6.6 or higher. To run the model's calculation, it is only needed to execute the file `run.py`. On the terminal, the command is `python run.py`. The code should return a `results.csv` file with all its predictions, from the test data.
 
 
 ### Prerequisites
