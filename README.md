@@ -21,7 +21,7 @@ To avoid dysfunctions, the code need the files:
 Those files contain functions that are used by the main code `run.py`.
 
 ### Additional content
-The folder `Test_implementations` also contains the code that tested for each implementation, which correspond to the implementation of all functions appart from ridge regression in the `implementation.py`. To run those file, the same files as the ridge are needed.
+The folder `Test_implementations` also contains file codes that tested each implementation appart from ridge regression in the `implementation.py`. To run those file, the same files as the ridge are needed.
 
 The file `ML_Projet1.pdf` correspond to the documentation of the project.
 
