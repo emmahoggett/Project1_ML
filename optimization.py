@@ -9,6 +9,10 @@ from cross_validation_reg_logistic import*
 ##### Cross validation #####
 
 def cross_validation_lambda(y, tX, k_fold=4):
+    """
+    Cross validation of the lambda for the ridge regression
+    Lambda is define between 10e-4 and 10e6
+    """
     seed = 1
     #lambdas = [0, 0.1, 0.15, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 4, 5]
     lambdas = np.logspace(-4,6,100)
@@ -34,6 +38,7 @@ def cross_validation_lambda(y, tX, k_fold=4):
 
 def cross_validation_degree(y, X, feat_ind, expansion_degrees, maxDeg=3, k_fold=4):
     """
+    Cross validation of the degree for the ridge regression
     feat_ind : index of the feature over which cross validation is done to find the optimal_degree
     expansion_degrees : indicates to what order should the other features be during the cross validation.
     """
@@ -60,7 +65,7 @@ def cross_validation_degree(y, X, feat_ind, expansion_degrees, maxDeg=3, k_fold=
     return optimal_degree
 
 def cross_validation(y, tx, k_indices, k, lambda_=0.12, gamma=0.5,max_iters=15):
-    # get k'th subgroup in test, others in train
+    "get k'th subgroup in test, others in train"
     te_indices = k_indices[k]
     tr_indices = k_indices[~(np.arange(k_indices.shape[0]) == k)]
     tr_indices = tr_indices.reshape(-1)
@@ -69,17 +74,15 @@ def cross_validation(y, tx, k_indices, k, lambda_=0.12, gamma=0.5,max_iters=15):
     y_tr = y[tr_indices]
     tx_te = tx[te_indices]
     y_te = y[te_indices]
-    #tx_tr = expand_vector(tx_tr, degree)
-    #tx_te = expand_vector(tx_te, degree)
+    
     weight, loss_tr = ridge_regression(y_tr, tx_tr, lambda_)     # ridge regression
-    #weight, loss_tr = logistic_regression(y0_tr, tX0_tr, init_w0, max_iters, gamma)
-    # calculate the loss for train and test data
+    
     rmse_tr = np.sqrt(2 * loss_tr)
     rmse_te = np.sqrt(2 * compute_loss(y_te, tx_te, weight))
     return rmse_tr, rmse_te
 
 def build_k_indices(y, k_fold, seed):
-    # build k indices for k-fold 
+    "build k indices for k-fold "
     num_row = y.shape[0]
     interval = int(num_row / k_fold)
     np.random.seed(seed)
@@ -89,6 +92,8 @@ def build_k_indices(y, k_fold, seed):
     return np.array(k_indices)
 
 def best_degree_logistic_regression(tX_tr, y_tr, degree_max=6, max_iter=150, gamma=0.01):
+    """Compute the best degree for the logistic regression
+    The maximum degree is set at 5"""
     deg = np.ones(tX_tr.shape[1],np.int64)
     degrees=range(1,degree_max)
     
@@ -105,9 +110,7 @@ def best_degree_logistic_regression(tX_tr, y_tr, degree_max=6, max_iter=150, gam
             
             w, _ = logistic_regression(y_tr, tX_tr_tmp,init_w, max_iter, gamma)
 
-            #sigma=sigmoid(tX_te_tmp,w)
-            #loss_te = -np.mean(y_te*np.log(sigma)+(1-y_te)*np.log(1-sigma))
-            #rmse_te.append(loss_te)
+
             y_pred = predict_labels(w,tX_te_tmp)
             res = np.where(y_te[:,] == y_pred[:,], 1, 0)
             grade = np.mean(res)
@@ -116,6 +119,7 @@ def best_degree_logistic_regression(tX_tr, y_tr, degree_max=6, max_iter=150, gam
     return deg
 
 def best_degree_least_squares(tX_te, tX_tr, y_tr,y_te, degree_max=6):
+    "Compute the best degree for the least squares method"
     deg = np.ones(tX_tr.shape[1],np.int64)
     degrees=range(1,degree_max)
     for feat_ind in range(len(deg)):
@@ -128,9 +132,7 @@ def best_degree_least_squares(tX_te, tX_tr, y_tr,y_te, degree_max=6):
             tX_tr_tmp=expand(tX_tr,deg_temp)
             w, _ = least_squares(y_tr,tX_tr_tmp)
 
-            #sigma=sigmoid(tX_te_tmp,w)
-            #loss_te = -np.mean(y_te*np.log(sigma)+(1-y_te)*np.log(1-sigma))
-            #rmse_te.append(loss_te)
+
             y_pred = predict_labels(w,tX_te_tmp)
             res = np.where(y_te[:,] == y_pred[:,], 1, 0)
             grade = np.mean(res)

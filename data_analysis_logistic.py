@@ -18,17 +18,16 @@ def data_analysis(jet_num, y_tr, tX_tr, ids_tr, y_fin, tX_fin, ids_fin,mass,rati
     tX_tr_new, tX_te, y_tr_new, y_te, ids_tr_new, ids_te=split_data(tX_tr, y_tr, ids_tr, ratio, seed=1)
     
     
+    
     tX_tr_new, m, std = standardize(tX_tr_new)
-    tX_tr=standardize_te(tX_tr, m, std)
     tX_te = standardize_te(tX_te, m, std)
+    tX_tr,m,std=standardize(tX_tr)
     tX_fin = standardize_te(tX_fin, m, std)
     
     #tX_tr_new, ids_tr_new,y_tr_new=extract_outliers(tX_tr_new,ids_tr_new,y_tr_new)
     #tX_tr, ids_tr,y_tr=extract_outliers(tX_tr, ids_tr,y_tr)
     #tX_te, ids_te, y_te=extract_outliers(tX_te, ids_te, y_te)
     
-    y_tr=rescale_y(y_tr, ids_tr, -1, 0)
-    y_fin=rescale_y(y_fin, ids_fin, -1,0)
     
     
     #tX_tr=build_multi_poly(tX_tr, degree)
@@ -156,10 +155,5 @@ def build_poly_data(tX_tr, tX_tr_new, tX_te, tX_fin, degree):
     tX_tr = build_multi_poly(tX_tr, degree)
     tX_tr_new = build_multi_poly(tX_tr_new, degree)
     tX_te = build_multi_poly(tX_te, degree)
-    tX_fin = build_multi_poly(tX_fin, degree)
-    print("Shape of tr, te, tr_new and fin")
-    print(tX_tr.shape)
-    print(tX_te.shape)
-    print(tX_tr_new.shape)
-    print(tX_fin.shape)  
+    tX_fin = build_multi_poly(tX_fin, degree)  
     return tX_tr, tX_tr_new, tX_te, tX_fin
