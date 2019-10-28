@@ -1,6 +1,5 @@
 import numpy as np
 
-##### Exploratory data analysis #####
 
 def data_processing(jet_num, mass, y_tr, tX_tr, ids_tr, y_te, tX_te, ids_te, y_pred, tX_pred, ids_pred):
     " Performs all of the data processing steps both on the dataset used for training and on the dataset on which predictions are made, so they have the same structure. "
@@ -73,7 +72,7 @@ def delete_outliers(tX,ids,y):
     ids = ids[(z < 3).all(axis=1)]
     tX = tX[(z < 3).all(axis=1)]
         
-    return tX,ids,y
+    return tX, ids, y
 
 
 
@@ -106,7 +105,7 @@ def standardize(x, x_mean, x_std):
 
 
 
-def split_data(x, y, ids, ratio, seed=None):
+def split_data(x, y, ids, ratio, seed=1):
     " Splits the training dataset in two with a given ratio."
     
     np.random.seed(seed)

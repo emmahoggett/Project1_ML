@@ -32,7 +32,7 @@ def cross_validation_lambda(y, tX, k_fold=4):
     optimal_lambda = lambdas[np.argmin(rmse_te)]
     return optimal_lambda
 
-def cross_validation_degree(y, X, feat_ind, expansion_degrees, maxDeg=3, k_fold=):
+def cross_validation_degree(y, X, feat_ind, expansion_degrees, maxDeg=3, k_fold=4):
     """
     feat_ind : index of the feature over which cross validation is done to find the optimal_degree
     expansion_degrees : indicates to what order should the other features be during the cross validation.
