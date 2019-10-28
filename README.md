@@ -21,7 +21,7 @@ To avoid dysfunctions, the code need the files:
 Those files contain functions that are used by the main code `run.py`.
 
 ### Additional content
-The folder also contains the notebook `project1.ipynb`, which correspond to the implementation of all functions appart from ridge regression in the `implementation.py`.
+The folder Test_implementations also contains the code that tested for each implementation, which correspond to the implementation of all functions appart from ridge regression in the `implementation.py`. To run those file, the same files as the ridge are needed.
 
 ### Documentation
 * [Class Project 1](https://github.com/epfml/ML_course/raw/master/projects/project1/project1_description.pdf) : Description of the project.
