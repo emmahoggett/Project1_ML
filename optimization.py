@@ -1,10 +1,7 @@
 import numpy as np
 from proj1_helpers import *
-from data_analysis_logistic import *
 from implementation import *
 from data_analysis import *
-from plots import *
-from cross_validation_reg_logistic import*
 
 ##### Cross validation #####
 
