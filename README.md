@@ -12,7 +12,13 @@ This version was designed for python 3.6.6 or higher. To run the model's calcula
 ### Prerequisites
 A train data and a testing data, where the results are unknown, are needed in `.csv` format .These data are available on the [Resources](https://www.aicrowd.com/challenges/epfl-machine-learning-higgs-2019/dataset_files) of AIcrowd platform.
 
-To avoid dysfunctions, the code need the files .... and .... Those files contain functions that are used by the main code `run.py`.
+To avoid dysfunctions, the code need the files:
+* `implementation.py`
+* `feature_expansion.py`
+* `pre_processing.py`
+* `proj1_helpers.py`
+
+Those files contain functions that are used by the main code `run.py`.
 
 ### Documentation
 * [Class Project 1](https://github.com/epfml/ML_course/raw/master/projects/project1/project1_description.pdf) : Description of the project.
