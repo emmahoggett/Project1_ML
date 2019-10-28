@@ -65,7 +65,6 @@ y3u_tr, tX3u_tr, ids3u_tr, y3u_te, tX3u_te, ids3u_te, y3u_pred, tX3u_pred, ids3u
 
 from implementation import *
 from optimization import * 
-from proj1_helpers import *
 
 # For every feature, determine the optimal degree for the polynomial feature expansion by 4-fold cross-validation on the training dataset.
 
