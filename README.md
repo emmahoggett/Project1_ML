@@ -10,7 +10,7 @@ This version was designed for python 3.6.6 or higher. To run the model's calcula
 
 
 ### Prerequisites
-A train data and a testing data, where the results are unknown, are needed in `.csv` format. These data are available on the [Resources](https://www.aicrowd.com/challenges/epfl-machine-learning-higgs-2019/dataset_files) of AIcrowd platform. Both files should be in a folder named `data` to run properly the code.
+A train data and a testing data, where the results are unknown, are needed in `.csv` format. These data are available on the [Resources](https://www.aicrowd.com/challenges/epfl-machine-learning-higgs-2019/dataset_files) of AIcrowd platform. Both files should be placed in a folder named `data` to run properly the code.
 
 To avoid dysfunctions, the code need the files:
 * `implementation.py`
