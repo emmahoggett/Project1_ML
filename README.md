@@ -14,8 +14,8 @@ A train data and a testing data, where the results are unknown, are needed in `.
 
 To avoid dysfunctions, the code need the files:
 * `implementation.py`
-* `feature_expansion.py`
-* `pre_processing.py`
+* `data_analysis.py`
+* `optimization.py`
 * `proj1_helpers.py`
 
 Those files contain functions that are used by the main code `run.py`.
